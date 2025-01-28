@@ -1,50 +1,103 @@
-# React + TypeScript + Vite
+# OneTap - The Smart AI Aggregator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+OneTap is a universal interface for AI, enabling individuals and businesses to seamlessly discover and use a range of AI models, agents, and tools through a single, intuitive chat interface. Rather than forcing users to pick from a confusing assortment of services, OneTap intelligently routes every query to the most suitable model.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Smart Model Routing**: Automatically directs queries to the most appropriate AI model based on task type
+- **Real-time Chat Interface**: Seamless conversation with message history
+- **Multi-Model Support**: 
+  - OpenAI (GPT-4)
+  - Anthropic (Claude)
+  - Deepseek
+- **File Processing**:
+  - Support for PDF, PNG, JPG, CSV files
+  - File content integration with chat context
+- **Task Categories**:
+  - Math
+  - Data analytics
+  - Programming
+  - Creative writing
+  - Translations
+  - Search
+  - Image generation
+  - Text to Speech
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Frontend**: 
+  - React
+  - Material-UI
+  - Socket.IO Client
+  - TypeScript
 
-- Configure the top-level `parserOptions` property like this:
+- **Backend**:
+  - FastAPI
+  - SQLite
+  - Socket.IO
+  - Python
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16+)
+- Python (v3.8+)
+- API keys for:
+  - OpenAI
+  - Anthropic
+  - Deepseek
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/OneTap.git
+cd OneTap
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+2. Install frontend dependencies:
+```bash
+npm install
 ```
+
+3. Install backend dependencies:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+4. Create a .env file in the root directory:
+```env
+DATABASE_URL=sqlite:///./onetap.db
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
+```
+
+### Running the Application
+
+1. Start the backend server:
+```bash
+python run.py
+```
+
+2. Start the frontend development server:
+```bash
+npm run dev
+```
+
+3. Visit http://localhost:52501 in your browser
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details
