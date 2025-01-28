@@ -48,6 +48,28 @@ OneTap is a universal interface for AI, enabling individuals and businesses to s
   - Anthropic
   - Deepseek
 
+## Project Structure
+
+```
+OneTap/
+├── frontend/           # React frontend application
+│   ├── src/           # Source code
+│   │   ├── components/    # React components
+│   │   ├── services/     # API and WebSocket services
+│   │   └── assets/       # Static assets
+│   ├── public/       # Public assets
+│   └── package.json  # Frontend dependencies
+│
+└── backend/          # FastAPI backend application
+    ├── app/          # Application code
+    │   ├── api/          # API endpoints
+    │   ├── core/         # Core functionality
+    │   ├── models/       # Database models
+    │   └── services/     # Business logic
+    ├── requirements.txt  # Python dependencies
+    └── run.py           # Application entry point
+```
+
 ### Installation
 
 1. Clone the repository:
@@ -58,17 +80,19 @@ cd OneTap
 
 2. Install frontend dependencies:
 ```bash
+cd frontend
 npm install
 ```
 
 3. Install backend dependencies:
 ```bash
+cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Create a .env file in the root directory:
+4. Create a .env file in the backend directory:
 ```env
 DATABASE_URL=sqlite:///./onetap.db
 OPENAI_API_KEY=your_openai_api_key
@@ -80,11 +104,14 @@ DEEPSEEK_API_KEY=your_deepseek_api_key
 
 1. Start the backend server:
 ```bash
+cd backend
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 python run.py
 ```
 
 2. Start the frontend development server:
 ```bash
+cd frontend
 npm run dev
 ```
 
