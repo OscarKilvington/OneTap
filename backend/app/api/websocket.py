@@ -4,7 +4,13 @@ from ..core.database import SessionLocal
 from ..models.models import Chat, Message
 import json
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=['http://localhost:52501'])
+sio = socketio.AsyncServer(
+    async_mode='asgi',
+    cors_allowed_origins=[
+        'http://localhost:51692',
+        'http://localhost:55237'
+    ]
+)
 app = socketio.ASGIApp(sio)
 
 ai_service = AIService()
