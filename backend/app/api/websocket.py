@@ -49,7 +49,10 @@ async def message(sid, data):
             content=response['content'],
             role='assistant',
             model=response['model'],
-            metadata={'provider': response['provider']}
+            metadata={
+                'provider': response['provider'],
+                'metrics': response['metrics']
+            }
         )
         db.add(ai_message)
         db.commit()
@@ -60,7 +63,8 @@ async def message(sid, data):
             'content': response['content'],
             'role': 'assistant',
             'model': response['model'],
-            'provider': response['provider']
+            'provider': response['provider'],
+            'metrics': response['metrics']
         }, room=sid)
         
     except Exception as e:

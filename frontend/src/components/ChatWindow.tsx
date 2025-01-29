@@ -24,6 +24,7 @@ const ChatWindow: React.FC = () => {
         model: response.model,
         provider: response.provider,
         timestamp: new Date(),
+        metrics: response.metrics,
       };
       
       setMessages(prev => [...prev, newMessage]);
@@ -95,11 +96,18 @@ const ChatWindow: React.FC = () => {
               }}
             >
               {message.model && (
-                <Typography variant="caption" color="textSecondary">
+                <Typography variant="caption" color="textSecondary" display="block">
                   {message.model} ({message.provider})
                 </Typography>
               )}
               <Typography>{message.content}</Typography>
+              {message.metrics && (
+                <Typography variant="caption" color="textSecondary" display="block" sx={{ mt: 1, fontSize: '0.7rem' }}>
+                  Tokens: {message.metrics.tokens_used} | 
+                  Cost: ${message.metrics.cost_usd.toFixed(6)} | 
+                  Latency: {message.metrics.latency_ms.toFixed(0)}ms
+                </Typography>
+              )}
             </Paper>
           </Box>
         ))}

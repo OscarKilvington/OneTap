@@ -14,19 +14,24 @@ class AIService:
         
         # Model configurations
         self.models = {
-            "gpt-4": {
+            "gpt-4-turbo": {
                 "provider": "openai",
-                "capabilities": ["programming", "math", "writing", "analysis"],
+                "capabilities": ["general"],
                 "priority": 5
             },
-            "claude-2": {
-                "provider": "anthropic",
-                "capabilities": ["programming", "analysis", "writing"],
+            "gpt-3.5-turbo": {
+                "provider": "openai",
+                "capabilities": ["general"],
                 "priority": 4
             },
-            "deepseek-coder": {
-                "provider": "deepseek",
-                "capabilities": ["programming"],
+            "claude-3-opus": {
+                "provider": "anthropic",
+                "capabilities": ["general"],
+                "priority": 5
+            },
+            "claude-2.1": {
+                "provider": "anthropic",
+                "capabilities": ["general"],
                 "priority": 4
             }
         }
@@ -49,42 +54,100 @@ class AIService:
         # Sort by priority and return the highest priority model
         return max(suitable_models, key=lambda x: x[1]["priority"])[0]
     
+    def _calculate_openai_cost(self, model: str, input_tokens: int, output_tokens: int) -> float:
+        """Calculate cost for OpenAI API usage"""
+        pricing = {
+            "gpt-4-turbo": {"input": 0.01/1000, "output": 0.03/1000},
+            "gpt-4": {"input": 0.03/1000, "output": 0.06/1000},
+            "gpt-3.5-turbo": {"input": 0.0005/1000, "output": 0.0015/1000}
+        }
+        if model in pricing:
+            return (input_tokens * pricing[model]["input"] + 
+                    output_tokens * pricing[model]["output"])
+        return 0.0
+
+    def _calculate_anthropic_cost(self, model: str, input_tokens: int, output_tokens: int) -> float:
+        """Calculate cost for Anthropic API usage"""
+        pricing = {
+            "claude-3-opus": {"input": 0.015/1000, "output": 0.075/1000},
+            "claude-3-sonnet": {"input": 0.003/1000, "output": 0.015/1000},
+            "claude-2.1": {"input": 0.008/1000, "output": 0.024/1000}
+        }
+        if model in pricing:
+            return (input_tokens * pricing[model]["input"] + 
+                    output_tokens * pricing[model]["output"])
+        return 0.0
+
     async def generate_response(self, query: str, model_name: str) -> Dict[str, Any]:
         """Generate response using the specified model"""
+        import time
+        start_time = time.time()
+        
         model_config = self.models[model_name]
         provider = model_config["provider"]
         
-        if provider == "openai":
-            response = await self._generate_openai_response(query, model_name)
-        elif provider == "anthropic":
-            response = await self._generate_anthropic_response(query, model_name)
-        elif provider == "deepseek":
-            response = await self._generate_deepseek_response(query, model_name)
-        else:
-            raise ValueError(f"Unknown provider: {provider}")
+        try:
+            if provider == "openai":
+                response, usage = await self._generate_openai_response(query, model_name)
+                cost = self._calculate_openai_cost(
+                    model_name,
+                    usage["prompt_tokens"],
+                    usage["completion_tokens"]
+                )
+                total_tokens = usage["total_tokens"]
+            elif provider == "anthropic":
+                response, usage = await self._generate_anthropic_response(query, model_name)
+                cost = self._calculate_anthropic_cost(
+                    model_name,
+                    usage["input_tokens"],
+                    usage["output_tokens"]
+                )
+                total_tokens = usage["input_tokens"] + usage["output_tokens"]
+            elif provider == "deepseek":
+                response = await self._generate_deepseek_response(query, model_name)
+                cost = 0.0
+                total_tokens = 0
+            else:
+                raise ValueError(f"Unknown provider: {provider}")
+        except Exception as e:
+            raise e
+        finally:
+            end_time = time.time()
             
         return {
             "content": response,
             "model": model_name,
-            "provider": provider
+            "provider": provider,
+            "metrics": {
+                "tokens_used": total_tokens,
+                "cost_usd": cost,
+                "latency_ms": (end_time - start_time) * 1000
+            }
         }
     
-    async def _generate_openai_response(self, query: str, model_name: str) -> str:
+    async def _generate_openai_response(self, query: str, model_name: str) -> tuple[str, dict]:
         """Generate response using OpenAI's API"""
         response = await self.openai_client.chat.completions.create(
             model=model_name,
             messages=[{"role": "user", "content": query}]
         )
-        return response.choices[0].message.content
+        return response.choices[0].message.content, {
+            "prompt_tokens": response.usage.prompt_tokens,
+            "completion_tokens": response.usage.completion_tokens,
+            "total_tokens": response.usage.total_tokens
+        }
     
-    async def _generate_anthropic_response(self, query: str, model_name: str) -> str:
+    async def _generate_anthropic_response(self, query: str, model_name: str) -> tuple[str, dict]:
         """Generate response using Anthropic's API"""
         message = await self.anthropic_client.messages.create(
             model=model_name,
             max_tokens=1024,
             messages=[{"role": "user", "content": query}]
         )
-        return message.content[0].text
+        return message.content[0].text, {
+            "input_tokens": message.usage.input_tokens,
+            "output_tokens": message.usage.output_tokens
+        }
     
     async def _generate_deepseek_response(self, query: str, model_name: str) -> str:
         """Generate response using Deepseek's API"""

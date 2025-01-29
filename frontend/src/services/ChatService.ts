@@ -1,5 +1,11 @@
 import { io, Socket } from 'socket.io-client';
 
+export interface CostMetrics {
+  tokens_used: number;
+  cost_usd: number;
+  latency_ms: number;
+}
+
 export interface Message {
   id?: string;
   content: string;
@@ -7,6 +13,7 @@ export interface Message {
   model?: string;
   provider?: string;
   timestamp?: Date;
+  metrics?: CostMetrics;
 }
 
 export interface ChatResponse {
@@ -15,6 +22,7 @@ export interface ChatResponse {
   role: 'assistant';
   model: string;
   provider: string;
+  metrics?: CostMetrics;
 }
 
 class ChatService {
