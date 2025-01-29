@@ -31,7 +31,7 @@ class ChatService {
   private errorHandlers: ((error: any) => void)[] = [];
 
   connect() {
-    this.socket = io('http://localhost:59500', {
+    this.socket = io('http://localhost:51692', {
       path: '/ws/socket.io',
       transports: ['websocket'],
     });
