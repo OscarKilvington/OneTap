@@ -14,10 +14,10 @@ interface ModelSelectorProps {
 }
 
 const SAMPLE_MODELS: Model[] = [
-  { id: 'gpt4', name: 'GPT-4', category: 'Programming', priority: 5 },
-  { id: 'claude', name: 'Claude', category: 'Creative Writing', priority: 4 },
-  { id: 'dalle', name: 'DALL-E', category: 'Image Generation', priority: 5 },
-  { id: 'mathpix', name: 'Mathpix', category: 'Math', priority: 4 },
+  { id: 'gpt4', name: 'GPT-4 Turbo', category: 'OpenAI', priority: 5 },
+  { id: 'gpt35', name: 'GPT-3.5 Turbo', category: 'OpenAI', priority: 4 },
+  { id: 'claude3', name: 'Claude 3 Opus', category: 'Anthropic', priority: 5 },
+  { id: 'claude2', name: 'Claude 2.1', category: 'Anthropic', priority: 4 },
 ];
 
 const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onModelChange }) => {
@@ -35,7 +35,7 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({ currentModel, onModelChan
       >
         {SAMPLE_MODELS.map((model) => (
           <MenuItem key={model.id} value={model.id}>
-            {model.name} - {model.category}
+            {model.name}
           </MenuItem>
         ))}
       </Select>
